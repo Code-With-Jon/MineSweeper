@@ -1,0 +1,37 @@
+#grid-container {
+border: 1px solid black;
+display: grid;
+grid-template-columns: repeat(20, 1fr);
+grid-template-rows: repeat(20, 1fr);
+margin-bottom: 20px;
+}
+
+section > div {
+  
+    background-color: cadetblue;
+    border: 1px solid black;
+    grid-column: 1 span;
+    /* grid-row: 1 span; */
+    width: 20px;
+    height:20px;
+}
+
+section > div:hover {
+    background-color: rgb(30, 75, 77)
+}
+
+#grid-flex-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+h1 {
+    text-align: center;
+}
+
+#reset {
+    display: flex;
+    margin: 0 auto; 
+}
+
