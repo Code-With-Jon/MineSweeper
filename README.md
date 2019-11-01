@@ -18,4 +18,10 @@
 12. Has Won will hide the grid and display an image of baloons with the Play Again button at the bottom of the screen
   
 
+Format: ![Game Start](https://share.icloud.com/photos/0WPz_pbbxPqwD-vixFHnfumRQ#Santa_Monica_Place)
+Format: ![Empty Cell - Search](https://share.icloud.com/photos/0Y7DOVJZ3UMSd09WEPabyacHw#Santa_Monica_Place)
+Format: ![Empty Cell - Next to Bomb](https://share.icloud.com/photos/0UdqIpV6LXrAGGMjCnv_IVA8w#Downtown_Santa_Monica)
+Format: ![Game Over](https://share.icloud.com/photos/0PfiHEJPlKeaYSSytFxxw2zLA#Santa_Monica_Place)
+
+
 
