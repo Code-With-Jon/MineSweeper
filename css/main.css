@@ -40,6 +40,7 @@ p {
     margin: 0 auto;
     justify-content: space-evenly;
     color: white;
+    padding-bottom: 12px;
 }
 
 #reset {
