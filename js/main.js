@@ -7,19 +7,25 @@ let gridHeight = 20;
 let bodyEl = document.querySelector('#grid-container');
 let gridEl = document.querySelector('body')
 let playAgain = document.querySelector('#reset');
+let divElAll = document.querySelectorAll('section > div');
+let title = document.querySelector('h1');
+let optionEl = document.querySelector('section')
+let difficultyEl = document.querySelector('#difficultyBombs');
 
 //INITIALIZE VARIABLES
+let difficulty = ['easy', 'medium', 'hard'];
 let currentCell;
 let cellEl;
 let cells;
 let edge = false;
 let counter = 1;
 let bombs = [];
+let numOfBombs;
 let leftEdge = false;
 let rightEdge = false;
 let topEdge = false;
 let bottomEdge = false;
-let edges = [leftEdge, rightEdge, topEdge, bottomEdge]
+let edges = [leftEdge = false, rightEdge = false, topEdge = false, bottomEdge = false]
 cells = {
     topLeft: 0,
     topMid: 0,
@@ -30,202 +36,270 @@ cells = {
     bottomMid: 0,
     bottomRight: 0
 }
+let arr = new Array(400);
+for (i = 0; i < 400; i++) {
+    arr[i] = i + 1;
+}
+
+let timer = 'true', mmin = 20, min = 0, sec = 0, perc = 612,
+    percm = perc;
+
+//Select Difficulty from option picker
+$("select").change(function () {
+    $(this).find("option:selected").each(function () {
+        var optionValue = $(this).attr("value");
+        if (optionValue === 'easy') {
+            numOfBombs = 50;
+            difficultyEl.innerText = "50 bombs";
+        } else if (optionValue === 'medium') {
+            numOfBombs = 100;
+            difficultyEl.innerText = "100 bombs";
+        } else if (optionValue === 'hard') {
+            numOfBombs = 200;
+            difficultyEl.innerText = "200 bombs";
+        } else {
+            $("select").hide();
+        }
+    }); render();
+}).change();
+
+
+
+
+//Randomly Generate Bombs as an index and push them to an array
+function generateBombs() {
+    for (i = 0; i < 400; i++) {
+        arr[i] = i + 1;
+    }
+    for (let i = 0; i < numOfBombs; i++) {
+        let index = Math.floor(Math.random() * arr.length);
+        bombs.push(arr.splice(index, 1)[0]);
+    }
+}
+
+
+
+
+
+
+// function clock() {
+//     let time = new Date();
+
+//     time.getHours().toString() + time.getMinutes().toString() + time.getSeconds().toString();
+//     let self = this;
+
+//     setTimeout(function () {
+//         self._clock();
+//     }, 1000);
+// }
+
+
+render()
+
 //Set Up Grid
-for (let i = 0; i < gridHeight; i++) {
-    for (let j = 0; j < gridWidth; j++) {
-        cellEl = document.createElement('div');
-        bodyEl.appendChild(cellEl);
-        cellEl.setAttribute("id", counter);
-        counter++;
-        cellEl.addEventListener('click', checkNeighbors)
+function render() {
+
+
+    $('.time').text(min + ':0' + sec);
+
+    arr = arr.map((item, index) => 1 + index);
+    while (bodyEl.firstChild) bodyEl.removeChild(bodyEl.firstChild)
+    bombs = []
+    counter = 1
+    bodyEl.style.visibility = 'visible'
+    gridEl.style.background = '#443c3c';
+    title.innerText = 'MINESWEEPER'
+    title.style.color = 'white';
+
+    for (let i = 0; i < gridHeight; i++) {
+        for (let j = 0; j < gridWidth; j++) {
+            cellEl = document.createElement('div');
+            bodyEl.appendChild(cellEl);
+            cellEl.setAttribute("id", counter);
+            counter++;
+            cellEl.addEventListener('click', checkNeighbors)
+            cellEl.addEventListener('contextmenu', flags)
+            // if (!bombs.includes(parseInt(cellEl.id))) {
+            //     cellEl.innerText = (`${parseInt(0)}`)
+            // } else {
+            //     cellEl.innerText = (`${parseInt(-1)}`)
+            //     cellEl.style.color = 'red'
+            // }
+        }
+    }
+    generateBombs();
+}
+// add a flagged toggle for right click
+let flagged = false
+function flags(evt) {
+    evt.preventDefault()
+    if (evt.target.classList.contains('active')) {
+        return;
+    }
+    if (flagged) {
+        console.log('flagged true')
+        console.log(evt.target)
+        evt.target.style.background = "rgb(67, 206, 199)"
+        flagged = false
+
+    } else {
+        flagged = true
+        evt.target.style.background = "url(https://www.nicepng.com/png/detail/50-502689_communist-flag-png-svg-library-library-red-flag.png)"
+        evt.target.style.backgroundSize = "20px 20px"
     }
 }
 
 function init() {
-
     bodyEl.style.visibility = 'visible'
     gridEl.style.background = 'white';
 
+}
+//Calls recursive search function. If target has a class "active", return.
+function checkNeighbors(evt) {
+    if (evt.target.classList.contains('active')) {
+        return;
+    }
+    evt.target.style.background = "rgb(67, 206, 199)"
+    recursiveSearch(evt.target);
+}
 
+//
+function countBombs(domObjectId) {
+    let bombCounter = 0;
+    let ind = domObjectId;
+    let neighbors = [
+        [-19, -20, -21],
+        [-1, 1],
+        [19, 20, 21]
+    ];
+    let neighborsActive = [
+        [true, true, true],
+        [true, true],
+        [true, true, true]
+    ];
+    // if LeftEdge
+    if (ind % 20 === 1) {
+        for (let i = 0; i < 2; i++) {
+            //set state of all left neighbors false
+            neighborsActive[i][0] = false;
+        }
+    }
+    //if RightEdge
+    if (ind % 20 === 0) {
+        for (let i = 0; i < 2; i++) {
+            //set state of right edge neighbors to false
+            neighborsActive[i][neighborsActive[i].length - 1] = false;
+        }
+    }
+    //if BottomEdge
+    if (ind + 20 > 400) {
+        for (let i = 0; i < 2; i++) {
+            //set state of all bottom neighbors to false
+            neighborsActive[2][i] = false;
+        }
+    }
+    //if RightEdge
+    if (ind - 20 < 1) {
+        for (let i = 0; i < 2; i++) {
+            //set state of all top neighbors to false
+            neighborsActive[0][i] = false;
+        }
+    }
+    //iterate over neighboring cells
+    for (let row = 0; row < 3; row++) {
+        for (let col = 0; col < neighborsActive[row].length; col++) {
+            //if neighboring cells arent an edge...
+            if (neighborsActive[row][col] === true) {
+                //relative to current index, cross check neighbors 
+                //for matching index in bombs array and add to bombCounter
+                if (bombs.includes(ind + neighbors[row][col])) {
+                    bombCounter += 1;
+                }
+            }
+        }
+    }
 
+    return bombCounter;
 }
 
 function recursiveSearch(domObject) {
-    //if Left edge is false (The wall hasnt been hit) - run checkEdges function
-    if (edges[leftEdge] === false) {
-        checkEdges(domObject);
-    }
-    //if Right edge is false (The wall hasnt been hit) - run checkEdges function
-    if (edges[rightEdge] === false) {
-        checkEdges(domObject);
-    }
-    //if Top edge is false (The wall hasnt been hit) - run checkEdges function
-    if (edges[topEdge] === false) {
-        checkEdges(domObject);
-    }
-    //if Bottom edge is false (The wall hasnt been hit) - run checkEdges function
-    if (edges[bottomEdge] === false) {
-        checkEdges(domObject);
-    }
-    //initialize bombCounter to 0
-    let bombCounter = 0;
-    //If User clicks on Bomb
+
+    let bombCount = countBombs(parseInt(domObject.id));
+    //if user clicks on bomb...
     if (bombs.includes(parseInt(domObject.id))) {
+        domObject.textContent = `${-1}`;
+        //change style
+        domObject.style.width = '20px';
+        domObject.style.height = '20px';
         bodyEl.style.visibility = 'hidden'
         gridEl.style.background = 'url("https://upload.wikimedia.org/wikipedia/commons/9/95/Bomb_icon.svg") no-repeat center';
-        playAgain.addEventListener('click', init)
+        playAgain.addEventListener('click', render)
+        return
+    } else if (domObject.className === 'active') {
+        return;
     }
-    //Check Top 3 cells for bombs
-    checkTopNeighbors(domObject);
-    //Check Middle 2 adjacent cells for bombs
-    checkMidNeighbors(domObject)
-    //Check Bottom 3 cells for bombs
-    checkBottomNeighbors(domObject);
-    //If Neighboring Cells Have Bombs by comparing index of neighbors to bombs index's, Add to BombCount total
-    for (let prop in cells) {
-        if (bombs.includes(cells[prop])) {
-            bombCounter += 1;
-        }
+    domObject.className = 'active';
+    if (flagged) {
+        domObject.style.background = 'rgb(30, 75, 77)'
     }
-    //Display bombCounter total 
-    domObject.textContent = bombCounter;
+    if (bombCount > 0) {
+        domObject.textContent = bombCount;
+        domObject.style.backgroundColor = 'rgb(30, 75, 77)'
+    }
+
     //Styles
     domObject.style.backgroundColor = 'rgb(30, 75, 77)'
     domObject.style.color = 'white';
     domObject.style.textAlign = 'center';
 
+    //Check Winner 
 
-    //Recursive Search
-    if (bombCounter === 0 && domObject !== 'active') {
-        //if bottom edge has not been hit by active element
-        if (edges[3] === false) {
-            //call recursive search on bottom neighboring cell Elements & assign class of "active"
-            recursiveSearch(document.getElementById(`${parseInt(domObject.id) + 20}`));
-            domObject.classList.add('active');
+    let totalActive = $('.active').length
+    let numOfTotalBombs = bombs.length;
 
-            recursiveSearch(document.getElementById(`${parseInt(domObject.id) + 21}`));
+    if (totalActive === 400 - numOfTotalBombs) {
+        title.innerHTML = "YOU WON!!!!"
+        gridEl.style.background = 'url("https://i.pinimg.com/originals/25/f3/45/25f345d3262ca30d3e45751f630b1c0e.png") no-repeat center';
+        bodyEl.style.visibility = 'hidden'
+        title.style.color = 'black';
+        playAgain.style.borderColor = 'black';
+        playAgain.addEventListener('click', render)
+    }
 
-            domObject.classList.add('active');
-            recursiveSearch(document.getElementById(`${parseInt(domObject.id) + 19}`));
-            domObject.classList.add('active');
 
-            edges[3] = false;
-            console.log(edges)
+
+    if (bombCount === 0) {
+
+        let ind = parseInt(domObject.id);
+        let neighbors = [-20, -1, 1, 20];
+        let neighborsActive = [true, true, true, true]
+        //if LeftEdge
+        if (ind % 20 === 1) {
+            neighborsActive[1] = false;
         }
-
-        //if Top edge has not been hit by active element
-        if (edges[2] === false) {
-
-
-            recursiveSearch(document.getElementById(`${parseInt(domObject.id) - 20}`));
-            domObject.classList.add('active');
-
-
-            recursiveSearch(document.getElementById(`${parseInt(domObject.id) - 21}`));
-            domObject.classList.add('active');
-
-            recursiveSearch(document.getElementById(`${parseInt(domObject.id) - 19}`));
-            domObject.classList.add('active');
-
-            edges[2] = false;
+        //if RightEdge
+        if (ind % 20 === 0) {
+            neighborsActive[2] = false;
         }
-        //if Right edge has not been hit by active element
-        if (edges[1] === false) {
-
-            recursiveSearch(document.getElementById(`${parseInt(domObject.id) + 1}`));
-            domObject.classList.add('active');
-
-            edges[1] = false;
+        //if Bottom Edge
+        if (ind + 20 > 400) {
+            neighborsActive[3] = false;
         }
-        //if Left edge has not been hit by active element
-        if (edges[0] === false) {
-
-            recursiveSearch(document.getElementById(`${parseInt(domObject.id) - 1}`));
-            domObject.classList.add('active');
-
-            edges[0] = false;
+        //if TopEdge
+        if (ind - 20 < 1) {
+            neighborsActive[0] = false;
         }
-        else {
-            return;
+        //Recursive Search for left, right, bottom, and top neighbors
+        for (let row = 0; row < 4; row++) {
+            //if neighbors havnt hit an edge
+            if (neighborsActive[row] === true) {
+                //assign newObj variable to the current and neighboring indicies
+                let newObj = document.getElementById(`${ind + neighbors[row]}`);
+                //call recursive search again on the neighbors
+                recursiveSearch(newObj);
+            }
+
         }
-
     }
-
 }
 
-
-//Pass Target Element through the recursive search
-function checkNeighbors(e) {
-    recursiveSearch(e.target);
-}
-
-function checkEdges(currentCell) {
-
-    //Check if current cell index is hitting left wall
-    if ((parseInt(currentCell.id) - 1) % 20 === 0) {
-        console.log('Left hit')
-        leftEdge = true;
-    }
-
-    //Check if current cell index is hitting right wall
-
-    if (parseInt(currentCell.id) % 20 === 0) {
-        console.log('Right Hit');
-        rightEdge = true;
-    }
-    //Check if current cell index is hitting top wall
-
-    if (parseInt(currentCell.id) - 20 < 1) {
-        console.log('Top Edge');
-        topEdge = true
-    }
-    //Check if current cell index is hitting bottom wall
-
-    if (parseInt(currentCell.id) + 20 > 400) {
-        console.log('Bottom Edge');
-        bottomEdge = true;
-    }
-    //return all edges
-    edges = [leftEdge, rightEdge, topEdge, bottomEdge];
-    return edges
-}
-
-function checkTopNeighbors(e) {
-    //Top Neighboring cells index's
-    currentCell = e.id;
-    cells.topMid = parseInt(currentCell) - 20;
-    cells.topLeft = parseInt(currentCell) - 21;
-    cells.topRight = parseInt(currentCell) - 19;
-}
-
-function checkBottomNeighbors(e) {
-
-    //Bottom Neighboring cells index's
-    currentCell = e.id;
-    cells.bottomMid = parseInt(currentCell) + 20;
-    cells.bottomLeft = parseInt(currentCell) + 19;
-    cells.bottomRight = parseInt(currentCell) + 21;
-
-
-
-    // console.log(cells.bottomLeft, cells.bottomMid, cells.bottomRight);
-}
-
-function checkMidNeighbors(e) {
-    //Left and Right Neighboring cells index's
-    currentCell = e.id;
-    cells.leftCenter = parseInt(currentCell) - 1;
-    cells.rightCenter = parseInt(currentCell) + 1;
-
-
-    //console.log(cells.leftCenter, cells.rightCenter);
-}
-
-//Randomly Generate Bombs as an index and push them to an array
-function generateBombs() {
-    for (let i = 0; i <= 20; i++) {
-        bombs.push(Math.floor(Math.random() * 400 + 1));
-    }
-    //  console.log(bombs)
-}
-generateBombs();

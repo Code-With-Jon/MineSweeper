@@ -7,21 +7,34 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <script src="https://code.jquery.com/jquery-3.4.1.js"
         integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU=" crossorigin="anonymous"></script>
-    <script defer type="module" src="js/main.js"></script>
+    <script defer type="text/javascript" src="js/main.js"></script>
     <link rel='stylesheet' type='text/css' href='../css/main.css' />
 
     <title>MineSweeper</title>
 </head>
 
 <body>
+    <div class="container">
+        <h1> MINESWEEPER</h1>
+        <p>Left click to display a cell | Right click to flag a cell</p>
+        <select class='difficulty'>
+            <option value="easy">Easy</option>
+            <option value="medium">Medium</option>
+            <option value="hard">Hard</option>
+        </select>
+        <p id='difficultyBombs'></p>
+        <div class='timer'>
+            <span class='time'> </span>
+        </div>
+        <div id='grid-flex-container'>
 
-    <h1> MINESWEEPER</h1>
-    <div id='grid-flex-container'>
-        <section id='grid-container'>
+            <section id='grid-container'>
 
-        </section>
+
+            </section>
+        </div>
+        <button id='reset'>Play Again?</button>
     </div>
-    <button id='reset'>Play Again?</button>
 </body>
 
 </html>
