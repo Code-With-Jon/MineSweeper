@@ -13,7 +13,7 @@ let title = document.querySelector('h1');
 let optionEl = document.querySelector('section')
 let difficultyEl = document.querySelector('#difficultyBombs');
 let login = $('.proceed');
-let playLogEl = $('#playerLog');
+let playLogEl = document.querySelector('#playerLog');
 let timeEl = document.getElementById("time");
 let currentPlayerList = document.querySelector("#currentPlayer")
 
@@ -103,34 +103,17 @@ function countTimer() {
     document.getElementById("time").innerHTML = hour + ":" + minute + ":" + seconds;
 }
 
-// function clock() {
-//     let time = new Date();
-
-//     time.getHours().toString() + time.getMinutes().toString() + time.getSeconds().toString();
-//     let self = this;
-
-//     setTimeout(function () {
-//         self._clock();
-//     }, 1000);
-// }
-
-
 render()
 
 //Set Up Grid
 function render() {
 
-    let Name = Storage.getItem('Name');
-    if (Name) {
-        console.log("hit")
-        console.log(playLogEl)
-        playLogEl.append(Name);
-    }
+
 
     playAgain.style.display = 'none';
 
 
-    //map new Array with index
+
     arr = arr.map((item, index) => 1 + index);
     while (bodyEl.firstChild) bodyEl.removeChild(bodyEl.firstChild)
     bombs = []
@@ -155,7 +138,6 @@ function render() {
             //     cellEl.style.color = 'red'
             // }
         }
-
     }
     generateBombs();
 }
@@ -180,19 +162,48 @@ function flags(evt) {
 }
 
 function init() {
-    var loginNameEl = $('#login-Name').val();
-    playerRoster[0] = loginNameEl
-    nameEl = document.createElement('li');
-    nameEl.textContent = playerRoster[0];
-    currentPlayerList.appendChild(nameEl);
-    console.log(playerRoster[0])
-    document.querySelector('div#login-form').style.display = 'none';
-    playAgain.style.display = 'none';
+    console.log("LOCAL STOR: ", localStorage)
+    var loginNameEl = document.getElementById('login-Name').value;
+    console.log(time.innerText)
+    console.log(loginNameEl)
+
+    playerRoster.push(loginNameEl);
+    if (!localStorage.Users) {
+        console.log("HItting IF: ", localStorage)
+        localStorage.setItem("Users", JSON.stringify(loginNameEl))
+        console.log("After IF: ", localStorage)
+    } else {
+        console.log("HITTING ELSE: ", localStorage)
+    }
+    playerRoster.push(JSON.parse(localStorage.getItem("Users")));
+    console.log("PARSED: ", typeof playerRoster)
+    // if (localStorage.length !== null) {
+    //     for (let i = 0; i < playerRoster.length; i + 2) {
+    //         let li = document.createElement("li");
+    //         li.innerText = playerRoster[i] + " : " + playerRoster[i + 1];
+    //         playLogEl.appendChild(li);
+    //         playerRoster.push(loginNameEl);
+    //     }
+    // }
+
+    if (playerRoster !== null) {
+        for (let i = 0; i < playerRoster.length; i += 2) {
+            let li = document.createElement("li");
+            li.innerText = playerRoster[i] + " : " + playerRoster[i + 1];
+            playLogEl.appendChild(li);
+        }
+    }
+    console.log(playerRoster);
+
+
+    let JSONreadyUsers = JSON.stringify(playerRoster);
+    // console.log(JSONreadyUsers);
+    localStorage.setItem('Users', JSONreadyUsers);
+
+
     // localStorage.setItem('Name', JSON.stringify(playerRoster));
     // let Name = localStorage.getItem('Name');
-    // nameEl = document.createElement('li');
-    // nameEl.textContent = localStorage.getItem('Name');
-    // playLogEl.append(nameEl);
+
     // var storedNames = JSON.parse(localStorage.getItem("names"));
     // for (i = 0; i <= localStorage.length - 1; i++) {
     //     key = localStorage.key(i);
@@ -276,21 +287,29 @@ function recursiveSearch(domObject) {
     let bombCount = countBombs(parseInt(domObject.id));
     //if user clicks on bomb...
     if (bombs.includes(parseInt(domObject.id))) {
+        if (playerRoster !== null) {
+            playerRoster.push(time.innerText);
+            let JSONreadyUsers = JSON.stringify(playerRoster);
+
+            localStorage.setItem('Users', JSONreadyUsers);
+
+            console.log(JSON.parse(localStorage.getItem("Users")));
+        }
         // stopClock();
         playAgain.style.display = 'grid';
-        console.log(time)
-        playerRoster.push(time.innerText)
-        localStorage.setItem('Name', JSON.stringify(playerRoster));
-        let Name = localStorage.getItem('Name');
-        nameEl = document.createElement('li');
-        nameEl.textContent = localStorage.getItem('Name');
-        playLogEl.append(nameEl);
-        var storedNames = JSON.parse(localStorage.getItem("names"));
-        for (i = 0; i <= localStorage.length - 1; i++) {
-            key = localStorage.key(i);
-            val = localStorage.getItem(key);
-            console.log(key, val)
-        }
+        // console.log(time)
+        // playerRoster.push(time.innerText)
+        // localStorage.setItem('Name', JSON.stringify(playerRoster));
+        // Name = localStorage.getItem('Name');
+        // nameEl = document.createElement('li');
+        // nameEl.textContent = localStorage.getItem('Name');
+        // playLogEl.append(nameEl);
+        // storedNames = JSON.parse(localStorage.getItem("Names"));
+        // for (i = 0; i <= localStorage.length - 1; i++) {
+        //     key = localStorage.key(i);
+        //     val = localStorage.getItem(key);
+        //     console.log(key, val)
+        // }
         domObject.textContent = `${-1}`;
         //change style
         domObject.style.width = '20px';
