@@ -83,3 +83,70 @@ p {
     display: flex;
     margin: auto;   
 }
+#logHeader {
+    display: flex;
+    position: absolute;
+    top: 75px;
+    left: 25px;
+    color: white;
+    text-decoration-line: underline;
+}
+
+#playerLog > li {
+    position: absolute;
+    top: 85px;
+    left: 0px;
+    color: white;
+    display: list-item;                                             
+    list-style-type: disc;      
+    list-style-position: inside;
+}
+
+#login-form {
+  display: grid;
+  grid-auto-columns: max-content;
+}
+
+label {
+    color: white;
+}
+ul#currentPlayer{
+    text-align-last: end;
+    padding: 0 80px;
+    color: white;   
+    text-decoration-line: underline;
+    font-weight: 100;
+    }
+
+ul#currentPlayer > li {
+        padding: 0 25px;
+        color: white;
+        list-style-type: none;
+        text-decoration-line:none;
+        display: list-item;                                             
+        list-style-type: disc;      
+        list-style-position: inside;
+    }
+
+#logHeader {
+    display: block;
+    padding-top: 28px;
+    text-align: center;
+}
+ul#playerLog{
+padding: 10px;
+display: grid;
+}
+div.timer{
+    color: #43cec7;
+    display: grid;
+}
+div#time {
+    display: grid;
+    align-items: center;
+    justify-content: center
+}
+div#stop_timer{
+    display: grid;
+    justify-content: center;
+}

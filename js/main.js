@@ -1,6 +1,7 @@
 //CONSTANTS
 let gridWidth = 20;
 let gridHeight = 20;
+let myStorage = window.localStorage;
 
 //CASHED
 
@@ -11,8 +12,13 @@ let divElAll = document.querySelectorAll('section > div');
 let title = document.querySelector('h1');
 let optionEl = document.querySelector('section')
 let difficultyEl = document.querySelector('#difficultyBombs');
+let login = $('.proceed');
+let playLogEl = $('#playerLog');
+let timeEl = document.getElementById("time");
+let currentPlayerList = document.querySelector("#currentPlayer")
 
 //INITIALIZE VARIABLES
+let playerRoster = [];
 let difficulty = ['easy', 'medium', 'hard'];
 let currentCell;
 let cellEl;
@@ -40,9 +46,15 @@ let arr = new Array(400);
 for (i = 0; i < 400; i++) {
     arr[i] = i + 1;
 }
+let timer;
 
-let timer = 'true', mmin = 20, min = 0, sec = 0, perc = 612,
-    percm = perc;
+
+
+login.click(function () {
+    init()
+
+});
+
 
 //Select Difficulty from option picker
 $("select").change(function () {
@@ -60,7 +72,8 @@ $("select").change(function () {
         } else {
             $("select").hide();
         }
-    }); render();
+    });
+    generateBombs()
 }).change();
 
 
@@ -68,6 +81,7 @@ $("select").change(function () {
 
 //Randomly Generate Bombs as an index and push them to an array
 function generateBombs() {
+    bombs = []
     for (i = 0; i < 400; i++) {
         arr[i] = i + 1;
     }
@@ -78,9 +92,16 @@ function generateBombs() {
 }
 
 
+var timerVar = setInterval(countTimer, 1000);
+var totalSeconds = 0;
+function countTimer() {
+    ++totalSeconds;
+    var hour = Math.floor(totalSeconds / 3600);
+    var minute = Math.floor((totalSeconds - hour * 3600) / 60);
+    var seconds = totalSeconds - (hour * 3600 + minute * 60);
 
-
-
+    document.getElementById("time").innerHTML = hour + ":" + minute + ":" + seconds;
+}
 
 // function clock() {
 //     let time = new Date();
@@ -99,9 +120,17 @@ render()
 //Set Up Grid
 function render() {
 
+    let Name = localStorage.getItem('Name');
+    if (Name) {
+        console.log("hit")
+        console.log(playLogEl)
+        playLogEl.append(Name);
+    }
 
-    $('.time').text(min + ':0' + sec);
+    playAgain.style.display = 'none';
 
+
+    //map new Array with index
     arr = arr.map((item, index) => 1 + index);
     while (bodyEl.firstChild) bodyEl.removeChild(bodyEl.firstChild)
     bombs = []
@@ -126,6 +155,7 @@ function render() {
             //     cellEl.style.color = 'red'
             // }
         }
+
     }
     generateBombs();
 }
@@ -150,12 +180,31 @@ function flags(evt) {
 }
 
 function init() {
-    bodyEl.style.visibility = 'visible'
-    gridEl.style.background = 'white';
+    var loginNameEl = $('#login-Name').val();
+    playerRoster[0] = loginNameEl
+    nameEl = document.createElement('li');
+    nameEl.textContent = playerRoster[0];
+    currentPlayerList.appendChild(nameEl);
+    console.log(playerRoster[0])
+    document.querySelector('div#login-form').style.display = 'none';
+    playAgain.style.display = 'none';
+    localStorage.setItem('Name', JSON.stringify(playerRoster));
+    let Name = localStorage.getItem('Name');
+    nameEl = document.createElement('li');
+    nameEl.textContent = localStorage.getItem('Name');
+    playLogEl.append(nameEl);
+    var storedNames = JSON.parse(localStorage.getItem("names"));
+    for (i = 0; i <= localStorage.length - 1; i++) {
+        key = localStorage.key(i);
+        val = localStorage.getItem(key);
+        console.log(key, val)
+    }
+
 
 }
 //Calls recursive search function. If target has a class "active", return.
 function checkNeighbors(evt) {
+    countTimer();
     if (evt.target.classList.contains('active')) {
         return;
     }
@@ -227,6 +276,21 @@ function recursiveSearch(domObject) {
     let bombCount = countBombs(parseInt(domObject.id));
     //if user clicks on bomb...
     if (bombs.includes(parseInt(domObject.id))) {
+        // stopClock();
+        playAgain.style.display = 'grid';
+        console.log(time)
+        playerRoster.push(time.innerText)
+        localStorage.setItem('Name', JSON.stringify(playerRoster));
+        let Name = localStorage.getItem('Name');
+        nameEl = document.createElement('li');
+        nameEl.textContent = localStorage.getItem('Name');
+        playLogEl.append(nameEl);
+        var storedNames = JSON.parse(localStorage.getItem("names"));
+        for (i = 0; i <= localStorage.length - 1; i++) {
+            key = localStorage.key(i);
+            val = localStorage.getItem(key);
+            console.log(key, val)
+        }
         domObject.textContent = `${-1}`;
         //change style
         domObject.style.width = '20px';

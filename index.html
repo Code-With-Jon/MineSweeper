@@ -14,8 +14,20 @@
 </head>
 
 <body>
+    <!-- Modal -->
+    <div id="login-form">
+        <form>
+            <label>Name:
+            </label>
+            <input type="text" id="login-Name" class="textbox">
+        </form>
+        <button type="submit" class="proceed">Start Playing! <i class="ion-ios-arrow-thin-right"></i></button>
+    </div>
+
+
     <div class="container">
         <h1> MINESWEEPER</h1>
+        <ul id='currentPlayer'>Current Player</ul>
         <p>Left click to display a cell | Right click to flag a cell</p>
         <select class='difficulty'>
             <option value="easy">Easy</option>
@@ -24,7 +36,8 @@
         </select>
         <p id='difficultyBombs'></p>
         <div class='timer'>
-            <span class='time'> </span>
+            <div id="time"></div>
+            <div id="stop_timer" onclick="clearInterval(timerVar)">Stop time</div>
         </div>
         <div id='grid-flex-container'>
 
@@ -34,6 +47,13 @@
             </section>
         </div>
         <button id='reset'>Play Again?</button>
+        <div id='logHeader'>
+
+            <h4>Player Log</h4>
+            <ul id='playerLog'>
+
+            </ul>
+        </div>
     </div>
 </body>
 
