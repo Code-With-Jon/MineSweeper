@@ -120,7 +120,7 @@ render()
 //Set Up Grid
 function render() {
 
-    let Name = localStorage.getItem('Name');
+    let Name = Storage.getItem('Name');
     if (Name) {
         console.log("hit")
         console.log(playLogEl)
@@ -188,17 +188,17 @@ function init() {
     console.log(playerRoster[0])
     document.querySelector('div#login-form').style.display = 'none';
     playAgain.style.display = 'none';
-    localStorage.setItem('Name', JSON.stringify(playerRoster));
-    let Name = localStorage.getItem('Name');
-    nameEl = document.createElement('li');
-    nameEl.textContent = localStorage.getItem('Name');
-    playLogEl.append(nameEl);
-    var storedNames = JSON.parse(localStorage.getItem("names"));
-    for (i = 0; i <= localStorage.length - 1; i++) {
-        key = localStorage.key(i);
-        val = localStorage.getItem(key);
-        console.log(key, val)
-    }
+    // localStorage.setItem('Name', JSON.stringify(playerRoster));
+    // let Name = localStorage.getItem('Name');
+    // nameEl = document.createElement('li');
+    // nameEl.textContent = localStorage.getItem('Name');
+    // playLogEl.append(nameEl);
+    // var storedNames = JSON.parse(localStorage.getItem("names"));
+    // for (i = 0; i <= localStorage.length - 1; i++) {
+    //     key = localStorage.key(i);
+    //     val = localStorage.getItem(key);
+    //     console.log(key, val)
+    // }
 
 
 }
