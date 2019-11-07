@@ -24,4 +24,10 @@ Empty Cell - Next to Bomb: ![Empty Cell - Next to Bomb](https://i.imgur.com/BK3a
 Game Over: ![Game Over](https://i.imgur.com/OPvB0Yu.jpg)
 
 
+# Frameworks:
+HTML | CSS | JavaScript 
+![alt text](http://aureliamoser.com/code-camp-18/img/htmlcssjs.png "HTML Logo")
+
+
+![alt text](https://i.ytimg.com/vi/M-Rp8u1AAHg/hqdefault.jpg "HTML Logo")
 
