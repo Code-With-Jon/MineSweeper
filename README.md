@@ -18,10 +18,10 @@
 12. Has Won will hide the grid and display an image of baloons with the Play Again button at the bottom of the screen
   
 
-Format: ![Game Start](https://i.imgur.com/JzUACNe.jpg)
-Format: ![Empty Cell - Search](https://i.imgur.com/EEJQn9v.jpg)
-Format: ![Empty Cell - Next to Bomb](https://i.imgur.com/BK3aeTy.jpg)
-Format: ![Game Over](https://i.imgur.com/OPvB0Yu.jpg)
+Game Start: ![Game Start](https://i.imgur.com/JzUACNe.jpg)
+Empty Cell - Search: ![Empty Cell - Search](https://i.imgur.com/EEJQn9v.jpg)
+Empty Cell - Next to Bomb: ![Empty Cell - Next to Bomb](https://i.imgur.com/BK3aeTy.jpg)
+Game Over: ![Game Over](https://i.imgur.com/OPvB0Yu.jpg)
 
 
 
