@@ -23,11 +23,14 @@ Empty Cell - Search: ![Empty Cell - Search](https://i.imgur.com/EEJQn9v.jpg)
 Empty Cell - Next to Bomb: ![Empty Cell - Next to Bomb](https://i.imgur.com/BK3aeTy.jpg)
 Game Over: ![Game Over](https://i.imgur.com/OPvB0Yu.jpg)
 
+# Link To Game:
+[PLAY MINESWEEPER](https://code-with-jon.github.io/MineSweeper/)
+
 
 # Frameworks:
 HTML | CSS | JavaScript 
 ![alt text](http://aureliamoser.com/code-camp-18/img/htmlcssjs.png "HTML Logo")
 
-
+Local Storage
 ![alt text](https://i.ytimg.com/vi/M-Rp8u1AAHg/hqdefault.jpg "HTML Logo")
 
