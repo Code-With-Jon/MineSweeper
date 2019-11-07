@@ -93,12 +93,12 @@ p {
 }
 
 #playerLog > li {
-    position: absolute;
+    
     top: 85px;
     left: 0px;
     color: white;
     display: list-item;                                             
-    list-style-type: disc;      
+    list-style-type: decimal;      
     list-style-position: inside;
 }
 
@@ -126,6 +126,7 @@ ul#currentPlayer > li {
         display: list-item;                                             
         list-style-type: disc;      
         list-style-position: inside;
+        grid-auto-flow: dense;
     }
 
 #logHeader {
@@ -134,8 +135,10 @@ ul#currentPlayer > li {
     text-align: center;
 }
 ul#playerLog{
+    display: flex;
 padding: 10px;
 display: grid;
+
 }
 div.timer{
     color: #43cec7;

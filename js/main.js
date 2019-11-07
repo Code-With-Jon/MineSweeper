@@ -16,8 +16,10 @@ let login = $('.proceed');
 let playLogEl = document.querySelector('#playerLog');
 let timeEl = document.getElementById("time");
 let currentPlayerList = document.querySelector("#currentPlayer")
-
+let subtextEl = document.querySelector('p');
+// let loginFormEl =
 //INITIALIZE VARIABLES
+let JSONreadyUsers = null;
 let playerRoster = [];
 let difficulty = ['easy', 'medium', 'hard'];
 let currentCell;
@@ -52,9 +54,19 @@ let timer;
 
 login.click(function () {
     init()
-
 });
 
+//Set Up Timer
+var timerVar = setInterval(countTimer, 1000);
+var totalSeconds = 0;
+function countTimer() {
+    ++totalSeconds;
+    var hour = Math.floor(totalSeconds / 3600);
+    var minute = Math.floor((totalSeconds - hour * 3600) / 60);
+    var seconds = totalSeconds - (hour * 3600 + minute * 60);
+
+    document.getElementById("time").innerHTML = hour + ":" + minute + ":" + seconds;
+}
 
 //Select Difficulty from option picker
 $("select").change(function () {
@@ -76,71 +88,6 @@ $("select").change(function () {
     generateBombs()
 }).change();
 
-
-
-
-//Randomly Generate Bombs as an index and push them to an array
-function generateBombs() {
-    bombs = []
-    for (i = 0; i < 400; i++) {
-        arr[i] = i + 1;
-    }
-    for (let i = 0; i < numOfBombs; i++) {
-        let index = Math.floor(Math.random() * arr.length);
-        bombs.push(arr.splice(index, 1)[0]);
-    }
-}
-
-
-var timerVar = setInterval(countTimer, 1000);
-var totalSeconds = 0;
-function countTimer() {
-    ++totalSeconds;
-    var hour = Math.floor(totalSeconds / 3600);
-    var minute = Math.floor((totalSeconds - hour * 3600) / 60);
-    var seconds = totalSeconds - (hour * 3600 + minute * 60);
-
-    document.getElementById("time").innerHTML = hour + ":" + minute + ":" + seconds;
-}
-
-render()
-
-//Set Up Grid
-function render() {
-
-
-
-    playAgain.style.display = 'none';
-
-
-
-    arr = arr.map((item, index) => 1 + index);
-    while (bodyEl.firstChild) bodyEl.removeChild(bodyEl.firstChild)
-    bombs = []
-    counter = 1
-    bodyEl.style.visibility = 'visible'
-    gridEl.style.background = '#443c3c';
-    title.innerText = 'MINESWEEPER'
-    title.style.color = 'white';
-
-    for (let i = 0; i < gridHeight; i++) {
-        for (let j = 0; j < gridWidth; j++) {
-            cellEl = document.createElement('div');
-            bodyEl.appendChild(cellEl);
-            cellEl.setAttribute("id", counter);
-            counter++;
-            cellEl.addEventListener('click', checkNeighbors)
-            cellEl.addEventListener('contextmenu', flags)
-            // if (!bombs.includes(parseInt(cellEl.id))) {
-            //     cellEl.innerText = (`${parseInt(0)}`)
-            // } else {
-            //     cellEl.innerText = (`${parseInt(-1)}`)
-            //     cellEl.style.color = 'red'
-            // }
-        }
-    }
-    generateBombs();
-}
 // add a flagged toggle for right click
 let flagged = false
 function flags(evt) {
@@ -161,31 +108,18 @@ function flags(evt) {
     }
 }
 
+//FUNCTIONS
 function init() {
-    console.log("LOCAL STOR: ", localStorage)
-    var loginNameEl = document.getElementById('login-Name').value;
-    console.log(time.innerText)
-    console.log(loginNameEl)
-
-    playerRoster.push(loginNameEl);
+    let loginNameEl = document.getElementById('login-Name').value;
+    playerRoster.push(loginNameEl, " ");
+    console.log(playerRoster);
+    let tmp = JSON.parse(localStorage.getItem("Users"));
+    tmp.forEach((e) => {
+        playerRoster.push(e);
+    });
     if (!localStorage.Users) {
-        console.log("HItting IF: ", localStorage)
         localStorage.setItem("Users", JSON.stringify(loginNameEl))
-        console.log("After IF: ", localStorage)
-    } else {
-        console.log("HITTING ELSE: ", localStorage)
     }
-    playerRoster.push(JSON.parse(localStorage.getItem("Users")));
-    console.log("PARSED: ", typeof playerRoster)
-    // if (localStorage.length !== null) {
-    //     for (let i = 0; i < playerRoster.length; i + 2) {
-    //         let li = document.createElement("li");
-    //         li.innerText = playerRoster[i] + " : " + playerRoster[i + 1];
-    //         playLogEl.appendChild(li);
-    //         playerRoster.push(loginNameEl);
-    //     }
-    // }
-
     if (playerRoster !== null) {
         for (let i = 0; i < playerRoster.length; i += 2) {
             let li = document.createElement("li");
@@ -193,26 +127,24 @@ function init() {
             playLogEl.appendChild(li);
         }
     }
-    console.log(playerRoster);
-
-
-    let JSONreadyUsers = JSON.stringify(playerRoster);
-    // console.log(JSONreadyUsers);
     localStorage.setItem('Users', JSONreadyUsers);
-
-
-    // localStorage.setItem('Name', JSON.stringify(playerRoster));
-    // let Name = localStorage.getItem('Name');
-
-    // var storedNames = JSON.parse(localStorage.getItem("names"));
-    // for (i = 0; i <= localStorage.length - 1; i++) {
-    //     key = localStorage.key(i);
-    //     val = localStorage.getItem(key);
-    //     console.log(key, val)
-    // }
-
-
+    let li = document.createElement('li');
+    li.innerText = loginNameEl;
+    currentPlayerList.appendChild(li)
 }
+
+//Randomly Generate Bombs as an index and push them to an array
+function generateBombs() {
+    bombs = []
+    for (i = 0; i < 400; i++) {
+        arr[i] = i + 1;
+    }
+    for (let i = 0; i < numOfBombs; i++) {
+        let index = Math.floor(Math.random() * arr.length);
+        bombs.push(arr.splice(index, 1)[0]);
+    }
+}
+
 //Calls recursive search function. If target has a class "active", return.
 function checkNeighbors(evt) {
     countTimer();
@@ -223,7 +155,7 @@ function checkNeighbors(evt) {
     recursiveSearch(evt.target);
 }
 
-//
+//Function to Count Bombs in Neighboring Cells
 function countBombs(domObjectId) {
     let bombCounter = 0;
     let ind = domObjectId;
@@ -288,15 +220,18 @@ function recursiveSearch(domObject) {
     //if user clicks on bomb...
     if (bombs.includes(parseInt(domObject.id))) {
         if (playerRoster !== null) {
-            playerRoster.push(time.innerText);
+            playerRoster[1] = time.innerText;
             let JSONreadyUsers = JSON.stringify(playerRoster);
-
             localStorage.setItem('Users', JSONreadyUsers);
-
-            console.log(JSON.parse(localStorage.getItem("Users")));
         }
-        // stopClock();
+        clearInterval(timerVar)
         playAgain.style.display = 'grid';
+        subtextEl.style.color = 'black';
+        subtextEl.innerText = 'Good Try!';
+        subtextEl.style.fontSize = '28px';
+        document.querySelector('p#difficultyBombs').style.display = 'none';
+
+
         // console.log(time)
         // playerRoster.push(time.innerText)
         // localStorage.setItem('Name', JSON.stringify(playerRoster));
@@ -348,9 +283,6 @@ function recursiveSearch(domObject) {
         playAgain.style.borderColor = 'black';
         playAgain.addEventListener('click', render)
     }
-
-
-
     if (bombCount === 0) {
 
         let ind = parseInt(domObject.id);
@@ -381,8 +313,47 @@ function recursiveSearch(domObject) {
                 //call recursive search again on the neighbors
                 recursiveSearch(newObj);
             }
-
         }
     }
 }
 
+//Set Up Grid
+function render() {
+    playLogEl.innerHTML = '';
+    if (playerRoster !== null) {
+        for (let i = 0; i < playerRoster.length; i += 2) {
+            let li = document.createElement("li");
+            li.innerText = playerRoster[i] + " : " + playerRoster[i + 1];
+            playLogEl.appendChild(li);
+        }
+    }
+    playAgain.style.display = 'none';
+    arr = arr.map((item, index) => 1 + index);
+    while (bodyEl.firstChild) bodyEl.removeChild(bodyEl.firstChild)
+    bombs = []
+    counter = 1
+    bodyEl.style.visibility = 'visible'
+    gridEl.style.background = '#443c3c';
+    title.innerText = 'MINESWEEPER'
+    title.style.color = 'white';
+
+    for (let i = 0; i < gridHeight; i++) {
+        for (let j = 0; j < gridWidth; j++) {
+            cellEl = document.createElement('div');
+            bodyEl.appendChild(cellEl);
+            cellEl.setAttribute("id", counter);
+            counter++;
+            cellEl.addEventListener('click', checkNeighbors)
+            cellEl.addEventListener('contextmenu', flags)
+            // if (!bombs.includes(parseInt(cellEl.id))) {
+            //     cellEl.innerText = (`${parseInt(0)}`)
+            // } else {
+            //     cellEl.innerText = (`${parseInt(-1)}`)
+            //     cellEl.style.color = 'red'
+            // }
+        }
+    }
+    generateBombs();
+}
+
+render()
