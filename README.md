@@ -17,7 +17,7 @@
 11. When the user has cleared the entire board without hitting a bomb, the user - HAS WON
 12. Has Won will hide the grid and display an image of baloons with the Play Again button at the bottom of the screen
   
-
+# Wireframe:
 Game Start: ![Game Start](https://i.imgur.com/JzUACNe.jpg)
 Empty Cell - Search: ![Empty Cell - Search](https://i.imgur.com/EEJQn9v.jpg)
 Empty Cell - Next to Bomb: ![Empty Cell - Next to Bomb](https://i.imgur.com/BK3aeTy.jpg)
