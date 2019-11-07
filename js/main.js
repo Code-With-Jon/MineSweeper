@@ -19,6 +19,9 @@ let currentPlayerList = document.querySelector("#currentPlayer")
 let subtextEl = document.querySelector('p');
 // let loginFormEl =
 //INITIALIZE VARIABLES
+let timerVar;
+let totalSeconds;
+let loginNameEl;
 let JSONreadyUsers = null;
 let playerRoster = [];
 let difficulty = ['easy', 'medium', 'hard'];
@@ -57,13 +60,12 @@ login.click(function () {
 });
 
 //Set Up Timer
-var timerVar = setInterval(countTimer, 1000);
-var totalSeconds = 0;
+
 function countTimer() {
     ++totalSeconds;
-    var hour = Math.floor(totalSeconds / 3600);
-    var minute = Math.floor((totalSeconds - hour * 3600) / 60);
-    var seconds = totalSeconds - (hour * 3600 + minute * 60);
+    let hour = Math.floor(totalSeconds / 3600);
+    let minute = Math.floor((totalSeconds - hour * 3600) / 60);
+    let seconds = totalSeconds - (hour * 3600 + minute * 60);
 
     document.getElementById("time").innerHTML = hour + ":" + minute + ":" + seconds;
 }
@@ -71,7 +73,7 @@ function countTimer() {
 //Select Difficulty from option picker
 $("select").change(function () {
     $(this).find("option:selected").each(function () {
-        var optionValue = $(this).attr("value");
+        let optionValue = $(this).attr("value");
         if (optionValue === 'easy') {
             numOfBombs = 50;
             difficultyEl.innerText = "50 bombs";
@@ -110,25 +112,26 @@ function flags(evt) {
 
 //FUNCTIONS
 function init() {
-    let loginNameEl = document.getElementById('login-Name').value;
-    playerRoster.push(loginNameEl, " ");
-    console.log(playerRoster);
-    let tmp = JSON.parse(localStorage.getItem("Users"));
-    tmp.forEach((e) => {
-        playerRoster.push(e);
-    });
-    if (!localStorage.Users) {
-        localStorage.setItem("Users", JSON.stringify(loginNameEl))
-    }
-    if (playerRoster !== null) {
-        for (let i = 0; i < playerRoster.length; i += 2) {
-            let li = document.createElement("li");
-            li.innerText = playerRoster[i] + " : " + playerRoster[i + 1];
+    let li
+    timerVar = setInterval(countTimer, 1000);
+    totalSeconds = 0;
+
+    loginNameEl = document.getElementById('login-Name').value;
+    playerRoster = localStorage.getItem('playerRoster')
+    console.log(playerRoster)
+    if (playerRoster === null) {
+        localStorage.setItem('playerRoster', JSON.stringify([]))
+    } else {
+        let playerRosterParsed = localStorage.getItem('playerRoster')
+        playerRosterParsed = JSON.parse(playerRosterParsed);
+        console.log(playerRosterParsed)
+        for (let i = 0; i < playerRosterParsed.length; i++) {
+            li = document.createElement("li");
+            li.innerText = `${playerRosterParsed[i].name} : ${playerRosterParsed[i].time}`;
             playLogEl.appendChild(li);
         }
     }
-    localStorage.setItem('Users', JSONreadyUsers);
-    let li = document.createElement('li');
+    li = document.createElement('li');
     li.innerText = loginNameEl;
     currentPlayerList.appendChild(li)
 }
@@ -171,28 +174,28 @@ function countBombs(domObjectId) {
     ];
     // if LeftEdge
     if (ind % 20 === 1) {
-        for (let i = 0; i < 2; i++) {
+        for (let i = 0; i < 3; i++) {
             //set state of all left neighbors false
             neighborsActive[i][0] = false;
         }
     }
     //if RightEdge
     if (ind % 20 === 0) {
-        for (let i = 0; i < 2; i++) {
+        for (let i = 0; i < 3; i++) {
             //set state of right edge neighbors to false
             neighborsActive[i][neighborsActive[i].length - 1] = false;
         }
     }
     //if BottomEdge
     if (ind + 20 > 400) {
-        for (let i = 0; i < 2; i++) {
+        for (let i = 0; i < 3; i++) {
             //set state of all bottom neighbors to false
             neighborsActive[2][i] = false;
         }
     }
-    //if RightEdge
+    //if TopEdge
     if (ind - 20 < 1) {
-        for (let i = 0; i < 2; i++) {
+        for (let i = 0; i < 3; i++) {
             //set state of all top neighbors to false
             neighborsActive[0][i] = false;
         }
@@ -216,15 +219,32 @@ function countBombs(domObjectId) {
 
 function recursiveSearch(domObject) {
 
+    let storedNames
+    let playerLogObj
     let bombCount = countBombs(parseInt(domObject.id));
     //if user clicks on bomb...
     if (bombs.includes(parseInt(domObject.id))) {
-        if (playerRoster !== null) {
-            playerRoster[1] = time.innerText;
-            let JSONreadyUsers = JSON.stringify(playerRoster);
-            localStorage.setItem('Users', JSONreadyUsers);
+        storedNames = JSON.parse(localStorage.getItem("playerRoster"));
+
+        playerLogObj = {
+            name: loginNameEl,
+            time: time.innerText
         }
+
+
+        storedNames.push(playerLogObj);
+        console.log(storedNames)
+        localStorage.setItem('playerRoster', JSON.stringify(storedNames))
+
+        // localStorage.setItem('playerRoster', );
+
+
         clearInterval(timerVar)
+
+
+
+
+
         playAgain.style.display = 'grid';
         subtextEl.style.color = 'black';
         subtextEl.innerText = 'Good Try!';
@@ -239,7 +259,7 @@ function recursiveSearch(domObject) {
         // nameEl = document.createElement('li');
         // nameEl.textContent = localStorage.getItem('Name');
         // playLogEl.append(nameEl);
-        // storedNames = JSON.parse(localStorage.getItem("Names"));
+
         // for (i = 0; i <= localStorage.length - 1; i++) {
         //     key = localStorage.key(i);
         //     val = localStorage.getItem(key);
@@ -319,14 +339,14 @@ function recursiveSearch(domObject) {
 
 //Set Up Grid
 function render() {
-    playLogEl.innerHTML = '';
-    if (playerRoster !== null) {
-        for (let i = 0; i < playerRoster.length; i += 2) {
-            let li = document.createElement("li");
-            li.innerText = playerRoster[i] + " : " + playerRoster[i + 1];
-            playLogEl.appendChild(li);
-        }
-    }
+    // playLogEl.innerHTML = '';
+    // if (playerRoster !== null) {
+    //     for (let i = 0; i < playerRoster.length; i += 2) {
+    //         let li = document.createElement("li");
+    //         li.innerText = playerRoster[i] + " : " + playerRoster[i + 1];
+    //         playLogEl.appendChild(li);
+    //     }
+    // }
     playAgain.style.display = 'none';
     arr = arr.map((item, index) => 1 + index);
     while (bodyEl.firstChild) bodyEl.removeChild(bodyEl.firstChild)

@@ -153,3 +153,36 @@ div#stop_timer{
     display: grid;
     justify-content: center;
 }
+
+.active{
+  background-color: rgb(255, 254, 106);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  animation-name: recurse;
+  animation-duration: 2.0s;
+  animation-timing-function: ease-out;
+  animation-delay: 0;
+  animation-direction: alternate;
+  animation-iteration-count: 1;
+  animation-fill-mode: forwards;
+  animation-play-state: running;
+  }
+  
+  @keyframes recurse {
+    0% {
+      transform: scale(.3);
+      background-color: darkslategrey;
+    }
+  
+    50% {
+      transform: scale(1.2);
+      background-color: darkslategrey;
+    }
+  
+    100% {
+      transform: scale(1.0);
+      background-color: darkslategrey;
+    }
+  }
+  
