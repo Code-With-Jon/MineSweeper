@@ -81,6 +81,9 @@ $("select").change(function () {
         } else if (optionValue === 'hard') {
             numOfBombs = 200;
             difficultyEl.innerText = "200 bombs";
+        } else if (optionValue === 'instantWin') {
+            numOfBombs = 1;
+            difficultyEl.innerText = '1 bomb'
         } else {
             $("select").hide();
         }
@@ -267,6 +270,9 @@ function recursiveSearch(domObject) {
     let numOfTotalBombs = bombs.length;
 
     if (totalActive === 400 - numOfTotalBombs) {
+        clearInterval(timerVar)
+        document.querySelector('.difficulty').style.display = 'none';
+        document.querySelector('p').style.display = 'none';
         title.innerHTML = "YOU WON!!!!"
         gridEl.style.background = 'url("https://i.pinimg.com/originals/25/f3/45/25f345d3262ca30d3e45751f630b1c0e.png") no-repeat center';
         bodyEl.style.visibility = 'hidden'
