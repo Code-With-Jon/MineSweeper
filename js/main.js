@@ -4,6 +4,7 @@ let gridHeight = 20;
 let myStorage = window.localStorage;
 
 //CASHED
+
 let bodyEl = document.querySelector('#grid-container');
 let gridEl = document.querySelector('body')
 let playAgain = document.querySelector('#reset');
@@ -16,13 +17,8 @@ let playLogEl = document.querySelector('#playerLog');
 let timeEl = document.getElementById("time");
 let currentPlayerList = document.querySelector("#currentPlayer")
 let subtextEl = document.querySelector('p');
-let loginFormEl = document.querySelector('#login-form');
-
+// let loginFormEl =
 //INITIALIZE VARIABLES
-let timer;
-let timerVar;
-let totalSeconds;
-let loginNameEl;
 let JSONreadyUsers = null;
 let playerRoster = [];
 let difficulty = ['easy', 'medium', 'hard'];
@@ -30,7 +26,6 @@ let currentCell;
 let cellEl;
 let cells;
 let edge = false;
-let flagged = false
 let counter = 1;
 let bombs = [];
 let numOfBombs;
@@ -50,17 +45,33 @@ cells = {
     bottomRight: 0
 }
 let arr = new Array(400);
+for (i = 0; i < 400; i++) {
+    arr[i] = i + 1;
+}
+let timer;
 
-//FUNCTIONS
+
+
 login.click(function () {
     init()
-    loginFormEl.style.display = 'none';
 });
+
+//Set Up Timer
+var timerVar
+var totalSeconds = 0;
+function countTimer() {
+    ++totalSeconds;
+    var hour = Math.floor(totalSeconds / 3600);
+    var minute = Math.floor((totalSeconds - hour * 3600) / 60);
+    var seconds = totalSeconds - (hour * 3600 + minute * 60);
+
+    document.getElementById("time").innerHTML = hour + ":" + minute + ":" + seconds;
+}
 
 //Select Difficulty from option picker
 $("select").change(function () {
     $(this).find("option:selected").each(function () {
-        let optionValue = $(this).attr("value");
+        var optionValue = $(this).attr("value");
         if (optionValue === 'easy') {
             numOfBombs = 50;
             difficultyEl.innerText = "50 bombs";
@@ -77,42 +88,19 @@ $("select").change(function () {
     generateBombs()
 }).change();
 
-function init() {
-    let li
-    timerVar = setInterval(countTimer, 1000);
-    loginNameEl = document.getElementById('login-Name').value;
-    playerRoster = localStorage.getItem('playerRoster')
-    //If local storage is empty
-    if (playerRoster === null) {
-        //Set local storage with a key, and an empty array
-        localStorage.setItem('playerRoster', JSON.stringify([]))
-    } else {
-        //Local storage isnt empty, Parse the values in local storage
-        let playerRosterParsed = localStorage.getItem('playerRoster')
-        playerRosterParsed = JSON.parse(playerRosterParsed);
-        //Display history of players and duration playing.
-        for (let i = 0; i < playerRosterParsed.length; i++) {
-            li = document.createElement("li");
-            li.innerText = `${playerRosterParsed[i].name} : ${playerRosterParsed[i].time}`;
-            playLogEl.appendChild(li);
-        }
-    }
-    //Display current player on seperate list
-    li = document.createElement('li');
-    li.innerText = loginNameEl;
-    currentPlayerList.appendChild(li)
-}
-
-// Add a flagged toggle for right click
+// add a flagged toggle for right click
+let flagged = false
 function flags(evt) {
-    //disable default right click menu to show up
     evt.preventDefault()
     if (evt.target.classList.contains('active')) {
         return;
     }
     if (flagged) {
+        console.log('flagged true')
+        console.log(evt.target)
         evt.target.style.background = "rgb(67, 206, 199)"
         flagged = false
+
     } else {
         flagged = true
         evt.target.style.background = "url(https://www.nicepng.com/png/detail/50-502689_communist-flag-png-svg-library-library-red-flag.png)"
@@ -120,15 +108,30 @@ function flags(evt) {
     }
 }
 
-//Set Up Timer
-totalSeconds = 0;
-function countTimer() {
-    ++totalSeconds;
-    let hour = Math.floor(totalSeconds / 3600);
-    let minute = Math.floor((totalSeconds - hour * 3600) / 60);
-    let seconds = totalSeconds - (hour * 3600 + minute * 60);
-
-    document.getElementById("time").innerHTML = hour + ":" + minute + ":" + seconds;
+//FUNCTIONS
+function init() {
+    timerVar = setInterval(countTimer, 1000);
+    let loginNameEl = document.getElementById('login-Name').value;
+    playerRoster.push(loginNameEl, " ");
+    console.log(playerRoster);
+    let tmp = JSON.parse(localStorage.getItem("Users"));
+    tmp.forEach((e) => {
+        playerRoster.push(e);
+    });
+    if (!localStorage.Users) {
+        localStorage.setItem("Users", JSON.stringify(loginNameEl))
+    }
+    if (playerRoster !== null) {
+        for (let i = 0; i < playerRoster.length; i += 2) {
+            let li = document.createElement("li");
+            li.innerText = playerRoster[i] + " : " + playerRoster[i + 1];
+            playLogEl.appendChild(li);
+        }
+    }
+    localStorage.setItem('Users', JSONreadyUsers);
+    let li = document.createElement('li');
+    li.innerText = loginNameEl;
+    currentPlayerList.appendChild(li)
 }
 
 //Randomly Generate Bombs as an index and push them to an array
@@ -145,7 +148,12 @@ function generateBombs() {
 
 //Calls recursive search function. If target has a class "active", return.
 function checkNeighbors(evt) {
-    countTimer();
+
+    if (timerVar === undefined) {
+        timerVar = setInterval(countTimer, 1000);
+
+    }
+
     if (evt.target.classList.contains('active')) {
         return;
     }
@@ -169,28 +177,28 @@ function countBombs(domObjectId) {
     ];
     // if LeftEdge
     if (ind % 20 === 1) {
-        for (let i = 0; i < 3; i++) {
+        for (let i = 0; i < 2; i++) {
             //set state of all left neighbors false
             neighborsActive[i][0] = false;
         }
     }
     //if RightEdge
     if (ind % 20 === 0) {
-        for (let i = 0; i < 3; i++) {
+        for (let i = 0; i < 2; i++) {
             //set state of right edge neighbors to false
             neighborsActive[i][neighborsActive[i].length - 1] = false;
         }
     }
     //if BottomEdge
     if (ind + 20 > 400) {
-        for (let i = 0; i < 3; i++) {
+        for (let i = 0; i < 2; i++) {
             //set state of all bottom neighbors to false
             neighborsActive[2][i] = false;
         }
     }
     //if TopEdge
     if (ind - 20 < 1) {
-        for (let i = 0; i < 3; i++) {
+        for (let i = 0; i < 2; i++) {
             //set state of all top neighbors to false
             neighborsActive[0][i] = false;
         }
@@ -208,40 +216,33 @@ function countBombs(domObjectId) {
             }
         }
     }
+
     return bombCounter;
 }
 
 function recursiveSearch(domObject) {
-    let storedNames
-    let playerLogObj
+
     let bombCount = countBombs(parseInt(domObject.id));
     //if user clicks on bomb...
     if (bombs.includes(parseInt(domObject.id))) {
-        //Parse local storage
-        storedNames = JSON.parse(localStorage.getItem("playerRoster"));
-        //Set up object with name variable and time variable
-        playerLogObj = {
-            name: loginNameEl,
-            time: time.innerText
+        if (playerRoster !== null) {
+            playerRoster[1] = time.innerText;
+            let JSONreadyUsers = JSON.stringify(playerRoster);
+            localStorage.setItem('Users', JSONreadyUsers);
         }
-        //Push object to array
-        storedNames.push(playerLogObj);
-        //Set local storage with Stringified array
-        localStorage.setItem('playerRoster', JSON.stringify(storedNames))
-        //Stop timer
         clearInterval(timerVar)
-        //change styles
         playAgain.style.display = 'grid';
         subtextEl.style.color = 'black';
         subtextEl.innerText = 'Good Try!';
         subtextEl.style.fontSize = '28px';
         document.querySelector('p#difficultyBombs').style.display = 'none';
         domObject.textContent = `${-1}`;
+        //change style
         domObject.style.width = '20px';
         domObject.style.height = '20px';
         bodyEl.style.visibility = 'hidden'
         gridEl.style.background = 'url("https://upload.wikimedia.org/wikipedia/commons/9/95/Bomb_icon.svg") no-repeat center';
-        playAgain.addEventListener('click', render)
+        playAgain.addEventListener('click', playAgainToggle)
         return
     } else if (domObject.className === 'active') {
         return;
@@ -261,6 +262,7 @@ function recursiveSearch(domObject) {
     domObject.style.textAlign = 'center';
 
     //Check Winner 
+
     let totalActive = $('.active').length
     let numOfTotalBombs = bombs.length;
 
@@ -272,8 +274,8 @@ function recursiveSearch(domObject) {
         playAgain.style.borderColor = 'black';
         playAgain.addEventListener('click', render)
     }
-    //Search
     if (bombCount === 0) {
+
         let ind = parseInt(domObject.id);
         let neighbors = [-20, -1, 1, 20];
         let neighborsActive = [true, true, true, true]
@@ -306,9 +308,24 @@ function recursiveSearch(domObject) {
     }
 }
 
+function playAgainToggle() {
+    timerVar = undefined
+    totalSeconds = 0;
+    clearInterval(timerVar)
+    // timerVar = setInterval(countTimer, 1000);
+    render()
+}
+
 //Set Up Grid
 function render() {
-    //Reset Layout
+    playLogEl.innerHTML = '';
+    if (playerRoster !== null) {
+        for (let i = 0; i < playerRoster.length; i += 2) {
+            let li = document.createElement("li");
+            li.innerText = playerRoster[i] + " : " + playerRoster[i + 1];
+            playLogEl.appendChild(li);
+        }
+    }
     playAgain.style.display = 'none';
     arr = arr.map((item, index) => 1 + index);
     while (bodyEl.firstChild) bodyEl.removeChild(bodyEl.firstChild)
@@ -318,11 +335,7 @@ function render() {
     gridEl.style.background = '#443c3c';
     title.innerText = 'MINESWEEPER'
     title.style.color = 'white';
-    subtextEl.innerText = 'Left click to display a cell | Right click to flag a cell'
-    subtextEl.style.fontSize = '16px';
-    subtextEl.style.color = 'white';
-    totalSeconds = 0;
-    //Generate new grid
+
     for (let i = 0; i < gridHeight; i++) {
         for (let j = 0; j < gridWidth; j++) {
             cellEl = document.createElement('div');
@@ -331,7 +344,6 @@ function render() {
             counter++;
             cellEl.addEventListener('click', checkNeighbors)
             cellEl.addEventListener('contextmenu', flags)
-            // FOR TESTING PURPOSES: SHOW BOMB LOCATIONS ON NEW GRID:
             // if (!bombs.includes(parseInt(cellEl.id))) {
             //     cellEl.innerText = (`${parseInt(0)}`)
             // } else {
@@ -342,4 +354,5 @@ function render() {
     }
     generateBombs();
 }
+
 render()
