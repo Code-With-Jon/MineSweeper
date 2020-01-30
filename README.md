@@ -1,5 +1,8 @@
 # MineSweeper
 
+##Go to MineSweeper
+https://code-with-jon.github.io/MineSweeper/
+
 1. Header title that displays "MineSweeper" at the top of the page
 2. Grid loads below the Header title to display a 20x20 grid with randomly generated bombs
 3. "Play Again" button will be displayed at the bottom of the screen below the grid
